@@ -1,0 +1,6 @@
+<div class="text-center">
+    <h1 class="display-1 fw-bold text-secondary">404</h1>
+    <h2 class="mb-4">Page Not Found</h2>
+    <p class="lead mb-4">Oops! The page you are looking for does not exist.</p>
+    <a href="/" class="btn btn-primary">Back to Home</a>
+</div>

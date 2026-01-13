@@ -1,0 +1,15 @@
+{
+    "Actions": "Actions",
+    "Email": "Email",
+    "ID": "ID",
+    "Joined": "Joined",
+    "Role": "Role",
+    "Status": "Status",
+    "User Management": "User Management",
+    "dashboard": "Dashboard",
+    "login": "Login",
+    "logout": "Logout",
+    "profile": "Profile",
+    "register": "Register",
+    "welcome": "Welcome"
+}

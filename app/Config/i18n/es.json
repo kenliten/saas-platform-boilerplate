@@ -1,0 +1,15 @@
+{
+    "Actions": "Acciones",
+    "Email": "Correo Electrónico",
+    "ID": "ID",
+    "Joined": "Ingresó",
+    "Role": "Rol",
+    "Status": "Estado",
+    "User Management": "Gestión de Usuarios",
+    "dashboard": "Panel de Control",
+    "login": "Iniciar Sesión",
+    "logout": "Cerrar Sesión",
+    "profile": "Perfil",
+    "register": "Registrarse",
+    "welcome": "Bienvenido"
+}
