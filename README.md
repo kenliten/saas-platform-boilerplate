@@ -95,7 +95,7 @@ This project is designed to be a solid foundation for your next SaaS venture.
 
 ### ❤️ Support the Project
 If you saved time or learned something cool, consider buying me a coffee!
-[Example: Buy Me a Coffee Link / Placeholder]
+[Buy Me a Coffee Link](https://buymeacoffee.com/orgalaydevf)
 
 ---
 *Built with ❤️ by Otoniel & The Community.*
