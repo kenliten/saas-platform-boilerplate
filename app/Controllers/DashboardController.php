@@ -3,27 +3,26 @@
 namespace App\Controllers;
 
 use App\Core\BaseController;
-use App\Core\Session;
 
 class DashboardController extends BaseController
 {
     public function index()
     {
         $db = \App\Core\Database::getConnection();
-        
-        // Metrics
-        $userCount = $db->query("SELECT COUNT(*) FROM users")->fetchColumn();
-        
-        // Total MRR
-        // Assuming accounts table has 'plan' column which stores SLUG, and plans table has 'price'
+
+        $result = $db->query("SELECT created_at FROM users WHERE role = 'user'")->fetchAll();
+        $userCount = array_map(function ($date) {
+            return $date['created_at'];
+        }, $result);
+
         $sqlMRR = "
             SELECT SUM(p.price) 
             FROM accounts a 
             JOIN plans p ON a.plan = p.slug 
+            WHERE p.price > 0
         ";
         $mrr = $db->query($sqlMRR)->fetchColumn() ?: 0.00;
 
-        // Active Subs (Paid)
         $sqlSubs = "
             SELECT COUNT(*) 
             FROM accounts a 
@@ -31,11 +30,10 @@ class DashboardController extends BaseController
             WHERE p.price > 0
         ";
         $subsCount = $db->query($sqlSubs)->fetchColumn();
-        
-        // Chart Data (Mocking last 6 months growth for demo)
+
         $chartData = [
-            'labels' => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-            'values' => [10, 25, 45, 80, 120, $userCount]
+            'labels' => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            'values' => $userCount
         ];
 
         $this->view('dashboard/index', [

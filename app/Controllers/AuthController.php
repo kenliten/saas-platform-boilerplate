@@ -4,7 +4,9 @@ namespace App\Controllers;
 
 use App\Core\BaseController;
 use App\Core\Session;
+use App\Core\Database;
 use App\Models\User;
+use App\Services\EmailService;
 
 class AuthController extends BaseController
 {
@@ -14,65 +16,78 @@ class AuthController extends BaseController
             header('Location: /dashboard');
             exit;
         }
-        return $this->view('auth/login', ['title' => 'Login'], 'guest');
+        return $this->view('auth/login', ['title' => __('login_title')], 'guest');
     }
 
     public function register()
     {
-        $this->view('auth/register', ['title' => 'Register'], 'guest');
+        if (Session::has('user_id')) {
+            header('Location: /dashboard');
+            exit;
+        }
+        return $this->view('auth/register', ['title' => __('register_title')], 'guest');
     }
 
     public function store()
     {
         $email = $_POST['email'];
         $password = $_POST['password'];
-        
-        $db = \App\Core\Database::getConnection();
-        
-        // 1. Create Account
+
+        $db = Database::getConnection();
+
         $stmt = $db->prepare("INSERT INTO accounts (name, plan) VALUES (?, ?)");
         $stmt->execute(['Personal Account', 'free']);
         $accountId = $db->lastInsertId();
-        
-        // 2. Create User
+
         $hashed = password_hash($password, PASSWORD_DEFAULT);
         try {
-            // Note: Migrations added is_active default 1, but we can be explicit
             $stmt = $db->prepare("INSERT INTO users (account_id, email, password_hash, is_active, role) VALUES (?, ?, ?, 1, 'user')");
-            // Check User model for column name. Original code used 'password_hash' in findByEmail check line 28 of AuthController, 
-            // but Migration 001 created table with 'password_hash' or 'password'?
-            // Looking at AuthController line 28: password_verify($password, $user['password_hash']) -> So column is password_hash.
             $stmt->execute([$accountId, $email, $hashed]);
-            
-            // Login
+
+            $welcomeMsg = "<div>" . __('onboarding_msg') . "</div>";
+            EmailService::send($email, __('welcome_to') . ' ' . env('APP_NAME'), $welcomeMsg);
             $userId = $db->lastInsertId();
             Session::set('user_id', $userId);
             Session::set('role', 'user');
             header('Location: /dashboard');
             exit;
         } catch (\PDOException $e) {
-            $this->view('auth/register', ['error' => 'Email already registered'], 'guest');
+            $this->view('auth/register', ['error' => __('email_registered')], 'guest');
         }
     }
 
     public function forgotPassword()
     {
-        $this->view('auth/forgot-password', ['title' => 'Forgot Password'], 'guest');
+        if (Session::has('user_id')) {
+            header('Location: /dashboard');
+            exit;
+        }
+        $this->view('auth/forgot-password', ['title' => __('forgot_password_title')], 'guest');
     }
 
     public function sendResetLink()
     {
         $email = $_POST['email'];
         $token = bin2hex(random_bytes(16));
-        $db = \App\Core\Database::getConnection();
-        
-        // Check if user exists first to strictness? Or blind insert?
-        // Blind insert is fine for mock.
-        $stmt = $db->prepare("INSERT INTO password_resets (email, token) VALUES (?, ?)");
-        $stmt->execute([$email, $token]);
-        
-        header('Location: /thank-you?msg=If an account exists, a reset link has been sent (Mock Token: ' . $token . ')');
-        exit;
+        $db = Database::getConnection();
+
+        $stmt = $db->prepare("SELECT * FROM users WHERE email = ?");
+        $stmt->execute([$email]);
+        $user = $stmt->fetch();
+
+        if (!$user) {
+            $this->view('auth/forgot-password', ['error' => 'Email not found'], 'guest');
+        } else {
+            $stmt = $db->prepare("INSERT INTO password_resets (email, token) VALUES (?, ?)");
+            $stmt->execute([$email, $token]);
+            $htmlMessage = __('click_below_to_reset') . ": <a href='http://localhost:8000/reset-password?token=$token'>" . __('reset_password') . "</a>";
+            $res = EmailService::send($email, __('reset_password'), $htmlMessage);
+            if ($res) {
+                header('Location: /thank-you?msg=' . __('reset_link_sent'));
+            } else {
+                $this->view('auth/forgot-password', ['error' => __('failed_to_send_reset_link')], 'guest');
+            }
+        }
     }
 
     public function authenticate()
@@ -85,22 +100,22 @@ class AuthController extends BaseController
 
         if ($user && password_verify($password, $user['password_hash'])) {
             if (isset($user['is_active']) && $user['is_active'] == 0) {
-                 return $this->view('auth/login', [
-                    'title' => 'Login', 
-                    'error' => 'Your account has been disabled.'
+                return $this->view('auth/login', [
+                    'title' => __('login_title'),
+                    'error' => __('account_disabled')
                 ], 'guest');
             }
 
             Session::set('user_id', $user['id']);
             Session::set('role', $user['role']);
-            
+
             header('Location: /dashboard');
             exit;
         }
 
         return $this->view('auth/login', [
-            'title' => 'Login', 
-            'error' => 'Invalid credentials'
+            'title' => __('login_title'),
+            'error' => __('invalid_credentials')
         ], 'guest');
     }
 

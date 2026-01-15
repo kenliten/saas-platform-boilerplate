@@ -5,7 +5,14 @@ namespace App\Core;
 class Router
 {
     protected $routes = [];
+    protected $globalMiddleware = [];
     protected $lastRoute = null;
+
+    public function globalMiddleware($middleware)
+    {
+        $this->globalMiddleware[] = $middleware;
+        return $this;
+    }
 
     public function get($path, $callback)
     {
@@ -40,7 +47,7 @@ class Router
     {
         $method = $_SERVER['REQUEST_METHOD'];
         $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-        
+
         $path = trim($path, '/');
         if ($path === '') {
             $path = '/';
@@ -57,7 +64,7 @@ class Router
         }
 
         $callback = $route['callback'];
-        $middlewares = $route['middleware'];
+        $middlewares = array_merge($this->globalMiddleware, $route['middleware']);
 
         // Execute Middleware
         foreach ($middlewares as $mwClass) {

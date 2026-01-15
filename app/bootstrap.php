@@ -1,12 +1,16 @@
 <?php
 
 // Output Escape Helper
-function e($string) {
+function e($string)
+{
     return htmlspecialchars($string ?? '', ENT_QUOTES, 'UTF-8');
 }
 
 // Global Helpers
-require_once __DIR__ . '/Helpers.php';
+require_once __DIR__ . '/Helpers/EnvHelper.php';
+require_once __DIR__ . '/Helpers/LocaleHelper.php';
+require_once __DIR__ . '/Helpers/I18nHelper.php';
+require_once __DIR__ . '/Helpers/AuthHelper.php';
 
 // Simple PSR-4 Style Autoloader
 spl_autoload_register(function ($class) {
@@ -41,7 +45,8 @@ spl_autoload_register(function ($class) {
 if (file_exists(dirname(__DIR__) . '/.env')) {
     $lines = file(dirname(__DIR__) . '/.env', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
     foreach ($lines as $line) {
-        if (strpos(trim($line), '#') === 0) continue;
+        if (strpos(trim($line), '#') === 0)
+            continue;
         list($name, $value) = explode('=', $line, 2);
         $name = trim($name);
         $value = trim($value);

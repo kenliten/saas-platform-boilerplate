@@ -1,20 +1,30 @@
 <div class="card p-4">
     <div class="text-center mb-4">
-        <h3>Forgot Password?</h3>
-        <p class="text-muted">Enter your email to receive a reset link</p>
+        <h3>
+            <?= __('forgot_password_title') ?>
+        </h3>
+        <p class="text-muted">
+            <?= __('click_below_to_reset') ?>
+        </p>
     </div>
 
     <form action="/forgot-password" method="POST">
         <?= \App\Core\Csrf::field() ?>
         <div class="mb-3">
-            <label class="form-label">Email address</label>
+            <label class="form-label">
+                <?= __('email') ?>
+            </label>
             <input type="email" name="email" class="form-control" required>
         </div>
         <div class="d-grid">
-            <button type="submit" class="btn btn-primary">Send Reset Link</button>
+            <button type="submit" class="btn btn-primary">
+                <?= __('send_reset_link') ?>
+            </button>
         </div>
     </form>
     <div class="text-center mt-3">
-        <a href="/login">Back to Login</a>
+        <a href="/login">
+            <?= __('back_to_login') ?>
+        </a>
     </div>
 </div>

@@ -20,12 +20,6 @@ CREATE TABLE IF NOT EXISTS notifications (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
--- Add profile fields to users if they don't exist
--- We use a stored procedure-like check or just run ALTER IGNORE equivalents.
--- Since MySQL/MariaDB syntax for "ADD COLUMN IF NOT EXISTS" varies or isn't standard in older versions,
--- we'll use a simple block. For this lightweight runner, we just run ALTERs.
--- If columns exist, it might error, but the runner tracks files. This is a NEW file.
-
 ALTER TABLE users ADD COLUMN fullname VARCHAR(100) NULL;
 ALTER TABLE users ADD COLUMN phone VARCHAR(20) NULL;
 ALTER TABLE users ADD COLUMN bio TEXT NULL;
