@@ -1,7 +1,8 @@
 <?php
 
 use App\Core\Session;
-use App\Core\Database;
+use App\Models\Account;
+use App\Models\User;
 
 if (!function_exists('is_authenticated')) {
     function is_authenticated()
@@ -27,6 +28,7 @@ if (!function_exists('user_role')) {
 if (!function_exists('user')) {
     function user()
     {
+        $userModel = new User();
         static $user = null;
         if ($user)
             return $user;
@@ -35,9 +37,7 @@ if (!function_exists('user')) {
         if (!$id)
             return null;
 
-        $db = Database::getConnection();
-        $stmt = $db->query("SELECT * FROM users WHERE id = ?", [$id]);
-        $user = $stmt->fetch();
+        $user = $userModel->find($id);
         return $user;
     }
 }
@@ -51,14 +51,12 @@ if (!function_exists('user_payment_status')) {
 
         $user = user();
         if (!$user)
-            return 'free'; // Default or none
+            return ['plan' => 'free', 'status' => 'inactive'];
 
-        $db = Database::getConnection();
-        // Assuming account_id is on user, and accounts table has 'plan' column (slug)
-        $stmt = $db->query("SELECT plan FROM accounts WHERE id = ?", [$user['account_id']]);
-        $result = $stmt->fetch();
-
-        $plan = $result['plan'] ?? 'free';
-        return $plan;
+        $accountModel = new Account();
+        $account = $accountModel->find($user['account_id']);
+        $plan = $account['plan'] ?? 'free';
+        $status = $account['status'] ?? 'inactive';
+        return ['plan' => $plan, 'status' => $status];
     }
 }

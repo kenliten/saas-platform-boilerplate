@@ -8,13 +8,13 @@ class DashboardController extends BaseController
 {
     public function index()
     {
-        $db = \App\Core\Database::getConnection();
+        $db = \App\Core\Database::getInstance();
 
-        $result = $db->query("SELECT created_at FROM users WHERE role = 'user'")->fetchAll();
-        $userCount = array_map(function ($date) {
-            return $date['created_at'];
-        }, $result);
+        // 1. Total Users
+        $users = $db->query("SELECT created_at FROM users WHERE role = 'user'")->fetchAll();
+        $userCount = count($users);
 
+        // 2. MRR
         $sqlMRR = "
             SELECT SUM(p.price) 
             FROM accounts a 
@@ -23,6 +23,7 @@ class DashboardController extends BaseController
         ";
         $mrr = $db->query($sqlMRR)->fetchColumn() ?: 0.00;
 
+        // 3. Active Subscriptions
         $sqlSubs = "
             SELECT COUNT(*) 
             FROM accounts a 
@@ -31,9 +32,26 @@ class DashboardController extends BaseController
         ";
         $subsCount = $db->query($sqlSubs)->fetchColumn();
 
+        // 4. Chart Data (Cumulative Monthly Growth)
+        $monthlyCounts = array_fill(1, 12, 0);
+        foreach ($users as $user) {
+            $timestamp = strtotime($user['created_at']);
+            if ($timestamp) {
+                $month = (int)date('n', $timestamp);
+                $monthlyCounts[$month]++;
+            }
+        }
+
+        $chartValues = [];
+        $runningTotal = 0;
+        for ($i = 1; $i <= 12; $i++) {
+            $runningTotal += $monthlyCounts[$i];
+            $chartValues[] = $runningTotal;
+        }
+
         $chartData = [
             'labels' => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-            'values' => $userCount
+            'values' => $chartValues
         ];
 
         $this->view('dashboard/index', [
