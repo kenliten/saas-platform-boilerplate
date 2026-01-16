@@ -26,7 +26,8 @@ class UserSeeder
             $accountId = $accountModel->create([
                 'slug' => 'demo',
                 'name' => $name,
-                'plan' => ''
+                'subscription_status' => 'active',
+                'plan' => 'pro' # The highest default plan, update if the plans are not the default
             ]);
             echo "Created Account: $name (demo)\n";
         } else {

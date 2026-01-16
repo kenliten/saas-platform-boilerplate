@@ -1,5 +1,5 @@
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2"><?= __('User Management') ?></h1>
+    <h1 class="h2"><?= __('user_management') ?></h1>
 </div>
 
 <!-- Invite Section -->
@@ -12,7 +12,8 @@
             <?= \App\Core\Csrf::field() ?>
             <div class="mb-3">
                 <label for="emails" class="form-label"><?= __('email_addresses_placeholder') ?></label>
-                <input type="text" class="form-control" id="emails" name="emails" placeholder="user1@example.com, user2@example.com" required>
+                <input type="text" class="form-control" id="emails" name="emails"
+                    placeholder="user1@example.com, user2@example.com" required>
             </div>
             <button type="submit" class="btn btn-primary"><?= __('send_invitations') ?></button>
         </form>
@@ -70,7 +71,8 @@
                             <form action="/admin/users/activate-subscription" method="POST" class="d-inline">
                                 <?= \App\Core\Csrf::field() ?>
                                 <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
-                                <button type="submit" class="btn btn-sm btn-outline-success" onclick="return confirm('Manually activate Pro for this user?');">
+                                <button type="submit" class="btn btn-sm btn-outline-success"
+                                    onclick="return confirm('Manually activate Pro for this user?');">
                                     Activate Pro
                                 </button>
                             </form>

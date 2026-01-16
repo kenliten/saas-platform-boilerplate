@@ -27,7 +27,8 @@ if (!is_dir($migrationDir)) {
 $files = scandir($migrationDir);
 $migrationFiles = [];
 foreach ($files as $file) {
-    if ($file === '.' || $file === '..') continue;
+    if ($file === '.' || $file === '..')
+        continue;
     if (pathinfo($file, PATHINFO_EXTENSION) === 'sql') {
         $migrationFiles[] = $file;
     }
@@ -46,19 +47,13 @@ foreach ($migrationFiles as $file) {
     echo "Migrating: $file\n";
 
     $sql = file_get_contents($migrationDir . '/' . $file);
-    
+
     try {
-        // Multi-statement execution usually works in one go with PDO,
-        // unless emulation is strictly off AND driver doesn't support it.
-        // But for safety and better error reporting, simple splitting by ';' might be needed
-        // OR just try standard exec if commands are simple.
-        // We will try executing the whole block. Basic MySQL PDO supports multiple statements if enabled (which is often default).
-        
         $pdo->exec($sql);
-        
+
         $stmt = $pdo->prepare("INSERT INTO migrations (filename) VALUES (?)");
         $stmt->execute([$file]);
-        
+
         echo "Migrated:  $file\n";
     } catch (Exception $e) {
         echo "Error in $file: " . $e->getMessage() . "\n";

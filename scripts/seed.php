@@ -9,5 +9,6 @@ echo "Seeding database...\n";
 
 PlanSeeder::seed();
 UserSeeder::seedDemoUser();
+// Add seeders as needed
 
 echo "Seeding complete.\n";
