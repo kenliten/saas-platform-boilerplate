@@ -24,14 +24,14 @@
     <table class="table table-striped table-sm">
         <thead>
             <tr>
-                <th><?= __('ID') ?></th>
-                <th><?= __('Email') ?></th>
-                <th><?= __('Role') ?></th>
-                <th><?= __('Plan') ?? 'Plan' ?></th>
-                <th><?= __('Subscription') ?? 'Subscription' ?></th>
-                <th><?= __('Status') ?></th>
-                <th><?= __('Joined') ?></th>
-                <th><?= __('Actions') ?></th>
+                <th><?= __('id') ?></th>
+                <th><?= __('email') ?></th>
+                <th><?= __('role') ?></th>
+                <th><?= __('plan') ?></th>
+                <th><?= __('subscription') ?></th>
+                <th><?= __('status') ?></th>
+                <th><?= __('joined') ?></th>
+                <th><?= __('actions') ?></th>
             </tr>
         </thead>
         <tbody>

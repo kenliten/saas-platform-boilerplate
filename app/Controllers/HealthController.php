@@ -30,7 +30,7 @@ class HealthController extends BaseController
             $status = 'error';
             $checks['storage'] = 'failed: not writable';
         }
-        
+
         $checks['timestamp'] = time();
 
         $this->json([

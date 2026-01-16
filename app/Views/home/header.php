@@ -1,4 +1,4 @@
-<header>
+<header id="header">
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top shadow-sm">
         <div class="container">
             <a class="d-flex gap-2 align-items-center text-decoration-none text-white" href="/">
@@ -11,10 +11,10 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto align-items-center">
                     <li class="nav-item">
-                        <a class="nav-link" href="#features"><?= __('nav_features') ?></a>
+                        <a class="nav-link" href="/#features"><?= __('nav_features') ?></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#testimonials"><?= __('nav_testimonials') ?></a>
+                        <a class="nav-link" href="/#testimonials"><?= __('nav_testimonials') ?></a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/pricing"><?= __('nav_pricing') ?></a>

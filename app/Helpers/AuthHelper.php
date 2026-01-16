@@ -2,6 +2,7 @@
 
 use App\Core\Session;
 use App\Models\Account;
+use App\Models\Plan;
 use App\Models\User;
 
 if (!function_exists('is_authenticated')) {
@@ -58,5 +59,27 @@ if (!function_exists('user_payment_status')) {
         $plan = $account['plan'] ?? 'free';
         $status = $account['status'] ?? 'inactive';
         return ['plan' => $plan, 'status' => $status];
+    }
+}
+
+if (!function_exists('is_pro')) {
+    function is_pro()
+    {
+        static $isPro = null;
+        if ($isPro !== null)
+            return $isPro;
+
+        $user = user();
+        if (!$user)
+            return false;
+
+        if ($user['role'] === 'admin')
+            return true;
+
+        $accountModel = new Account();
+        $result = $accountModel->find($user['account_id']);
+
+        $isPro = (($result['plan'] ?? '') === 'pro' && ($result['subscription_status'] ?? '') === 'active');
+        return $isPro;
     }
 }
