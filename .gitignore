@@ -1,4 +1,4 @@
 .env
 storage/backups/*.sql
 storage/backups/*.tar.gz
-public/uploads/*
+public/uploads/*storage/logs/*.log
