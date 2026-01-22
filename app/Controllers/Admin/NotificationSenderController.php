@@ -8,25 +8,27 @@ use App\Core\Database;
 
 class NotificationSenderController extends BaseController
 {
-    public function index()
+    private function dieIfNotAdmin()
     {
         if (Session::get('role') !== 'admin') {
             http_response_code(403);
             die('Unauthorized');
         }
+    }
+
+    public function index()
+    {
+        $this->dieIfNotAdmin();
 
         $db = Database::getInstance();
         $announcements = $db->query("SELECT * FROM announcements ORDER BY created_at DESC LIMIT 20")->fetchAll();
-        
+
         $this->view('admin/notifications/index', ['announcements' => $announcements]);
     }
 
     public function store()
     {
-        if (Session::get('role') !== 'admin') {
-            http_response_code(403);
-            die('Unauthorized');
-        }
+        $this->dieIfNotAdmin();
 
         $type = $_POST['type'] ?? 'news';
         $subject = $_POST['subject'] ?? '';

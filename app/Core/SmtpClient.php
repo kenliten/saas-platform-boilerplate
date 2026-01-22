@@ -42,7 +42,7 @@ class SmtpClient
             fclose($this->socket);
 
             return true;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("SMTP Error: " . $e->getMessage());
             return false;
         }
@@ -50,13 +50,37 @@ class SmtpClient
 
     private function connect()
     {
-        $this->socket = fsockopen($this->host, $this->port, $errno, $errstr, $this->timeout);
-        if (!$this->socket) {
-            throw new Exception("Could not connect to SMTP host: $errstr ($errno)");
+        $protocol = '';
+        if ($this->port == 465) {
+            $protocol = 'ssl://';
         }
+
+        $context = stream_context_create([
+            'ssl' => [
+                'verify_peer' => false,
+                'verify_peer_name' => false,
+                'allow_self_signed' => true
+            ]
+        ]);
+
+        $this->socket = stream_socket_client($protocol . $this->host . ':' . $this->port, $errno, $errstr, $this->timeout, STREAM_CLIENT_CONNECT, $context);
+
+        if (!$this->socket) {
+            throw new \Exception("Could not connect to SMTP host: $errstr ($errno)");
+        }
+
         $this->getResponse();
 
         $this->sendCommand("EHLO " . gethostname());
+
+        // Handle TLS for port 587
+        if ($this->port == 587) {
+            $this->sendCommand("STARTTLS");
+            if (!stream_socket_enable_crypto($this->socket, true, STREAM_CRYPTO_METHOD_TLS_CLIENT)) {
+                throw new \Exception("TLS handshake failed");
+            }
+            $this->sendCommand("EHLO " . gethostname());
+        }
     }
 
     private function auth()

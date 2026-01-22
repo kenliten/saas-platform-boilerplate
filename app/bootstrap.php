@@ -12,6 +12,7 @@ require_once __DIR__ . '/Helpers/LocaleHelper.php';
 require_once __DIR__ . '/Helpers/I18nHelper.php';
 require_once __DIR__ . '/Helpers/AuthHelper.php';
 require_once __DIR__ . '/Helpers/LoggerHelper.php';
+require_once __DIR__ . '/Helpers/ThemeHelper.php';
 
 // Simple PSR-4 Style Autoloader
 spl_autoload_register(function ($class) {

@@ -9,6 +9,10 @@
     <link href="/assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="/assets/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <script src="/assets/color-modes.js"></script>
+
+    <!-- Theme Overrides -->
+    <?php include __DIR__ . '/../partials/theme_css.php'; ?>
+
     <style>
         body {
             background-color: var(--bs-body-bg);
